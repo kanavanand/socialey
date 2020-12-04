@@ -2,3 +2,13 @@ dash
 pandas
 numpy
 requests
+-e git+https://github.com/twintproject/twint.git@a45a8ac719d5710e7da92f77d9801b351e505c1f#egg=twint
+matplotlib
+textblob
+dash-bootstrap-components
+sklearn
+nltk
+seaborn
+plotly
+
+
