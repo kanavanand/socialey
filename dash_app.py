@@ -132,7 +132,6 @@ def hashtag_value_taker(n_clicks,pain_point, value):
             dcc.Graph(id='user_name_hashtag',figure=fig_1,style=standard_Style),
             dcc.Graph(id='trend_hashtag',figure=fig_2,style=standard_Style)],
             style={'display': 'flex','justify-content':'space-between','width':'90%','margin':"auto"})
-    
     hashtag_an = html.Div([up_row,down_row])
     return hashtag_an
 
@@ -155,7 +154,6 @@ def display_page(pathname):
     elif pathname == '/recomend':
         print("Buzzword page")
         return page_recommendation_content
-    
     elif pathname == '/influencer':
         print("Buzzword page")
         return leaderboard_content

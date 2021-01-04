@@ -57,7 +57,8 @@ def prepeare_Dashboard_content():
                 dbc.DropdownMenuItem("Overall", header=True),
                 dbc.DropdownMenuItem("Twitter", href="#"),
                 dbc.DropdownMenuItem("Facebook", href="#"),
-                dbc.DropdownMenuItem("Instagram", href="#"),
+                dbc.DropdownMenuItem("LinkedIn", href="#"),
+                dbc.DropdownMenuItem("Reddit", href="#"),
                 dbc.DropdownMenuItem("Blogs", href="#")
             ]),width="auto",)
         ],

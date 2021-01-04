@@ -3,6 +3,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.express as px
+import os
 import pandas as pd
 import dash_table
 img_url = "https://www.ntaskmanager.com/wp-content/uploads/2020/01/Sentiment-Analysis.png"
@@ -19,17 +20,19 @@ def makeCardContent(header,title):
         dbc.CardBody(
             [
                 html.H2(title, className="card-title")
+                
             ]
         ),
     ]
     return card_content
 
 def makeCard(data):
+    data.fillna(0,inplace=True)
     dc = {
         "Total Tweets":data.shape[0],
         "Average Sentiment":str(data.sentiment_int.mean())[:4],
         "Average Likes": str(data.likes_count.mean())[:4],
-        "Total Comments":str(data.replies_count.sum())
+        "Total Comments":str(data['replies_count.1'].sum())
     }
     row_1 = dbc.Row(
         [
@@ -106,10 +109,18 @@ def generate_table(df, max_rows=10):
             }
         ],
         style_table={'height': '32vh', 'overflowY': 'auto'}
+
+        
+        
+        
 )
 
 def hashtag_graphs(hashTag='#BetterWorkingWorld',pain_point=[]):
-    data = get_data_for_campaign(hashTag)
+    filePath = "{}_query.csv".format(hashTag.lower())
+    if os.path.exists(filePath):
+        data = pd.read_csv(filePath)
+    else:
+        data = get_data_for_campaign(hashTag)
 #     data = preprocessData(pd.read_pickle('../supply_chain1.pkl'))
     pain_points= [' hit ','suffer','poor','bad','not good','affected','problem']
     if len(pain_point)>0:

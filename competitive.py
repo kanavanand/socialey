@@ -24,7 +24,7 @@ data_dic = {"ey":ey, "pwc":pwc  , "kpmg":kpmg , "deliotte":deliotte}
 
 def top_n_trending_hash_month(hashtags , number):
     all_hashtags = list(itertools.chain.from_iterable(hashtags))
-    hashtags = pd.Series(all_hashtags).value_counts().head(number)
+    hashtags = pd.Series(all_hashtags).apply(lambda x: x.lower()).value_counts().head(number)
     return hashtags
 
 def top_n_trending_hash_month_df(data,number=10):

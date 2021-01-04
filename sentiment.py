@@ -15,6 +15,9 @@ from hackpion.EyHelper import (get_all_hashtags , get_all_mentions ,strip_all_en
 
 
 
+
+
+
 def preprocessData(df):
     df["mentions"] = df.tweet.apply(lambda x: get_all_mentions( str(x)))
     df["hashtags"] = df.tweet.apply(lambda x: get_all_hashtags( str(x)))
@@ -46,7 +49,7 @@ def update_sentiment_trend(selected_options , timeframe):
     avg.Type="Mean"
     count_data = pd.concat([like_ey ,like_ey_neg , like_ey_pos,like_])
     count_data = count_data.loc[count_data.Type.isin(selected_options)]
-    fig_line_all = px.line(count_data, x=timeframe, y="sentiment_int",color="Type")
+    fig_line_all = px.line(count_data, x=timeframe, y="sentiment_int",color="Type",title="Trend for tweets")
     fig_line_all.update_layout(
     xaxis=dict(
         showline=True,
@@ -72,7 +75,7 @@ def update_sentiment_trend(selected_options , timeframe):
 
 
 def sentiment_distribution_chart():
-    fig = make_subplots(rows=2, cols=2, start_cell="bottom-left")
+    fig = make_subplots(rows=2, cols=2, start_cell="bottom-left",subplot_titles = ["EY" ,"KPMG","PWC","Deliotte"])
 
     fig.add_trace(go.Bar(x= ey.sentiment.value_counts().index,y= ey.sentiment.value_counts().values,name="EY"),
                   row=1, col=1)

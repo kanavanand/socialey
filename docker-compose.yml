@@ -1,6 +1,6 @@
-# version: '3.6'
-# services : 
-#   dashy:
-#     build: ./
-#     ports: 
-#       - "8080:8080"
+version: '3.6'
+services : 
+  dashy:
+    build: ./
+    ports: 
+      - "80:80"

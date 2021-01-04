@@ -20,8 +20,6 @@ ey = preprocessData(pd.read_csv('data/ey_news.csv'))
 import dash_core_components as dcc
 
 
-
-
 def give_buzzing_word( data , TOPIC ):
         all_sentences = data.loc[data.hashtags.apply(lambda x: TOPIC in [i.lower() for i in x])].cleaned_review.unique()
         st = " ".join(all_sentences)
