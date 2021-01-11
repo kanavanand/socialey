@@ -1,6 +1,11 @@
 FROM python:3.6
 # Create a directory where the code is to be hosted
 RUN mkdir /app
+#### install vim
+RUN apt-get update
+RUN apt-get -y install vim
+RUN apt-get -y install cron
+
 # Define the working directory in the container
 WORKDIR /app 
 # Copy and install the requirements.

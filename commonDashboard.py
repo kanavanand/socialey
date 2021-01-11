@@ -25,8 +25,7 @@ def prepeare_Dashboard_content():
                                 dbc.Button(
                                     "Search", color="primary", className="ml-2"
                                 ),
-                                # set width of button column to auto to allow
-                                # search box to take up remaining space.
+
                                 width="auto",
                             ),
                         ],
@@ -47,10 +46,12 @@ def prepeare_Dashboard_content():
         [
             dbc.Col(dbc.NavbarBrand("Dashboard", href="/"), sm=3, md=2),
             dbc.Col(dbc.Input(type="search", placeholder="Search here")),
+            dbc.Button("Documentation", color="primary", className="mr-1",href="https://drive.google.com/file/d/1agfON6s362cPZ-jusoYg2DUUnDsJtcZK/view?usp=sharing"),
             dbc.Col(
                 dbc.Nav(dbc.NavItem(dbc.NavLink("All Sources")), navbar=True),
                 width="auto",
             ),
+            
             dbc.Col(
             dbc.DropdownMenu(
             children=[

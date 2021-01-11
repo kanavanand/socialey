@@ -1,6 +1,7 @@
 from sklearn.feature_extraction.text import*
 import nltk
 nltk.download('stopwords')
+
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash
@@ -9,15 +10,29 @@ import dash_html_components as html
 import plotly.express as px
 import pandas as pd
 import dash_table
+import json
 
 from nltk.corpus import stopwords
 import operator
 allStopwords = set(stopwords.words('english'))
 import numpy as np
 from sentiment import preprocessData
-ey = preprocessData(pd.read_csv('data/ey_news.csv'))
+# ey = preprocessData(pd.read_csv('../data/ey_news.csv'))
+with open('database/compet_database.json', 'r') as openfile: 
+            data = json.load(openfile) 
+comp = pd.DataFrame(data['username'])
+competitors = comp.loc[comp.compet].screen_name.values
+self_account = comp.loc[~comp.compet].screen_name.values
+search_base = [{comp_:[comp_]} for comp_ in competitors]+[{"EY":list(self_account)}]
+    
+ey = pd.DataFrame()
+for i in self_account:
+    ey = pd.concat([ey,pd.read_csv('database/userdata/{}_user_profile.csv'.format(i))])
 
-import dash_core_components as dcc
+import ast 
+ey.hashtags = ey.hashtags.apply(ast.literal_eval)
+ey.mentions = ey.mentions.apply(ast.literal_eval)
+
 
 
 def give_buzzing_word( data , TOPIC ):
@@ -100,8 +115,19 @@ def wordcloud_bigram(word="#covid19"):
         fig = px.treemap(BuzzingWordsInTopic, path=['words'], values='frequency',title='Trending Keywords')
         return fig
     
+
+
+
     
 def prepeare_Buzzword_content(dashboard):
+    alert = dbc.Alert(
+    [
+        html.P("List of findings of hot topics along with their frequency"),
+        html.P("Clicking on any particular hashtag from the bars in the 1st  chart results in a display of buzzwords around that hashtag in the 2nd chart. "),
+        html.P("Donut chart to represent sentiments for a particular hashtag from 1st chart.")
+    ]
+    )
+
     buzzwords = html.Div(children=[
             dcc.Graph(id='pie',figure=company_buzzword(),style={'width': '75vh', 'height': '55vh','display': 'inline-block',
                                                              "box-shadow":"0 8px 16px 0 rgba(0,0,0,0.2)"}),
@@ -121,5 +147,5 @@ def prepeare_Buzzword_content(dashboard):
 
 
 
-    page_buzzwords_content = html.Div([dashboard , html.Div([buzzwords , buzzwords_down],style={'padding':"30px"}) ])
+    page_buzzwords_content = html.Div([dashboard ,alert , html.Div([buzzwords , buzzwords_down],style={'padding':"30px"}) ])
     return page_buzzwords_content

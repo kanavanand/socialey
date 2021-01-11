@@ -2,7 +2,7 @@ dash
 pandas
 numpy
 requests
--e git+https://github.com/twintproject/twint.git@a45a8ac719d5710e7da92f77d9801b351e505c1f#egg=twint
+-e git+https://github.com/twintproject/twint.git@4b30fa33991ccdf89c77471382daad3d3bc8c988#egg=twint
 matplotlib
 textblob
 dash-bootstrap-components
@@ -10,5 +10,6 @@ sklearn
 nltk
 seaborn
 plotly
-
-
+twitter
+tabulate
+nest-asyncio==1.4.1

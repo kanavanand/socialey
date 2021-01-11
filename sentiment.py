@@ -7,17 +7,14 @@ import dash_html_components as html
 import plotly.express as px
 import pandas as pd
 import dash_table
+import json
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output, State
 from hackpion.EyHelper import (get_all_hashtags , get_all_mentions ,strip_all_entities ,sentiment_final , sentiment_final_int,
                         sentiment_analyzer_scores_text_blob)
-
-
-
-
-
-
+import dash_bootstrap_components as dbc
+import dash_html_components as html
 def preprocessData(df):
     df["mentions"] = df.tweet.apply(lambda x: get_all_mentions( str(x)))
     df["hashtags"] = df.tweet.apply(lambda x: get_all_hashtags( str(x)))
@@ -27,9 +24,23 @@ def preprocessData(df):
     df["sentiment_int"] = df.sentiment_polarity.apply(sentiment_final_int)
     return df
 
-
-
 def update_sentiment_trend(selected_options , timeframe):
+    with open('database/compet_database.json', 'r') as openfile: 
+            data = json.load(openfile) 
+    comp = pd.DataFrame(data['username'])
+    competitors = comp.loc[comp.compet].screen_name.values
+    self_account = comp.loc[~comp.compet].screen_name.values
+    search_base = [{comp_:[comp_]} for comp_ in competitors]+[{"EY":list(self_account)}]
+        
+    ey = pd.DataFrame()
+    for i in self_account:
+        ey = pd.concat([ey,pd.read_csv('database/userdata/{}_user_profile.csv'.format(i))])
+
+    compet = pd.DataFrame()
+    for i in competitors:
+        compet = pd.concat([compet,pd.read_csv('database/userdata/{}_user_profile.csv'.format(i))])
+    
+
     print(selected_options,timeframe)
     ey['Week'] = pd.to_datetime(ey['date']).dt.strftime('%U')
     ey['month'] =ey.date.apply(lambda x: x[:7])
@@ -65,49 +76,83 @@ def update_sentiment_trend(selected_options , timeframe):
         ),
     ),
     
-    
     plot_bgcolor='white'
-)
-
-    
+)   
     return fig_line_all
 
-
-
 def sentiment_distribution_chart():
-    fig = make_subplots(rows=2, cols=2, start_cell="bottom-left",subplot_titles = ["EY" ,"KPMG","PWC","Deliotte"])
+    with open('database/compet_database.json', 'r') as openfile: 
+            data = json.load(openfile) 
+    comp = pd.DataFrame(data['username'])
+    competitors = comp.loc[comp.compet].screen_name.values
+    self_account = comp.loc[~comp.compet].screen_name.values
+    search_base = [{comp_:[comp_]} for comp_ in competitors]+[{"EY":list(self_account)}]
+        
+    ey = pd.DataFrame()
+    for i in self_account:
+        ey = pd.concat([ey,pd.read_csv('database/userdata/{}_user_profile.csv'.format(i))])
 
+    compet = pd.DataFrame()
+    for i in competitors:
+        compet = pd.concat([compet,pd.read_csv('database/userdata/{}_user_profile.csv'.format(i))])
+        
+
+    fig = make_subplots(rows=1, cols=2, start_cell="bottom-left",subplot_titles = ["EY" ,"Competitor"])
+    
     fig.add_trace(go.Bar(x= ey.sentiment.value_counts().index,y= ey.sentiment.value_counts().values,name="EY"),
                   row=1, col=1)
 
-    fig.add_trace(go.Bar(x= kpmg.sentiment.value_counts().index,y= kpmg.sentiment.value_counts().values,name="KPMG"),
+    fig.add_trace(go.Bar(x= compet.sentiment.value_counts().index,y= compet.sentiment.value_counts().values,name="Competitor"),
                   row=1, col=2)
-
-    fig.add_trace(go.Bar(x= pwc.sentiment.value_counts().index,y= pwc.sentiment.value_counts().values,name="PWC"),
-                  row=2, col=1)
-
-    fig.add_trace(go.Bar(x= deliotte.sentiment.value_counts().index,y= deliotte.sentiment.value_counts().values,name="Deliotte"),
-                  row=2, col=2)
 
     fig.update_layout( plot_bgcolor='white')
     return fig
 
 
 def prepeare_Sentiment_content(dashboard):
+    with open('database/compet_database.json', 'r') as openfile: 
+            data = json.load(openfile) 
+    comp = pd.DataFrame(data['username'])
+    competitors = comp.loc[comp.compet].screen_name.values
+    self_account = comp.loc[~comp.compet].screen_name.values
+    search_base = [{comp_:[comp_]} for comp_ in competitors]+[{"EY":list(self_account)}]
+        
+    ey = pd.DataFrame()
+    for i in self_account:
+        ey = pd.concat([ey,pd.read_csv('database/userdata/{}_user_profile.csv'.format(i))])
+
+    compet = pd.DataFrame()
+    for i in competitors:
+        compet = pd.concat([compet,pd.read_csv('database/userdata/{}_user_profile.csv'.format(i))])
+        
+
+
+
+
+ 
+
+    alert = dbc.Alert(
+        [
+            html.P("Sentiment Analysis helps nderstand how our users feel about a topic or your brand and compare it with other competitors."),
+            html.P("Time Period: Choose a timeline for which you want the analysis"),
+            html.P("Line chart representation of the sentiment spread of  in different timeframes "),
+            html.P("Donut chart to represent different languages used in the tweets")
+        ]
+    )
 
     multiselect = html.Div(children = [dcc.Dropdown(id='multi_select_option',
-                                    options=[
-                                        {'label': 'All Tweets', 'value': 'All Tweets'},
-                                        {'label': 'Negative Sentiment', 'value': 'Negative Sentiment'},
-                                        {'label': 'Positive Sentiment', 'value': 'Positive Sentiment'}
-                                    ],
-                                    value=['All Tweets'],
+                                       options=[
+                                            {'label': 'All Tweets', 'value': 'All Tweets'},
+                                            {'label': 'Negative Sentiment', 'value': 'Negative Sentiment'},
+                                            {'label': 'Positive Sentiment', 'value': 'Positive Sentiment'}
+                                        ],
+                                        value=['All Tweets'],
 
-                                    multi=True
-                                )],style={'display': 'inline-block' , 
-                                          "width" :"60%",
-                                          "padding-left":"70px",
-                                          "padding-right":"50px"})
+                                        multi=True
+                                    )],style={'display': 'inline-block' , 
+                                              "width" :"60%",
+                                              "padding-left":"70px",
+                                              "padding-right":"50px"})
 
     radio_button = dcc.RadioItems(id='timeframe_selection',
             options=[
@@ -159,7 +204,7 @@ def prepeare_Sentiment_content(dashboard):
                              style={'display': 'flex','justify-content':'space-between','width':'90%','margin':"auto","padding-top":"10px"})
 
 
-    page_sentiment_content = html.Div(children = [ dashboard , selectors , html.Div([sentiment_content_up, sentiment_content_down],style={'padding':"30px"})],style={'padding':"30px"})
+    page_sentiment_content = html.Div(children = [ dashboard ,alert , selectors , html.Div([sentiment_content_up, sentiment_content_down],style={'padding':"30px"})],style={'padding':"30px"})
 
     
     
@@ -172,8 +217,3 @@ colors = {'Negative': 'red',
           'Positive': 'lightgreen'}
         ######## reading data ########
 
-kpmg = preprocessData(pd.read_csv('data/KPMG.csv'))
-ey = preprocessData(pd.read_csv('data/ey_news.csv'))
-deliotte = preprocessData(pd.read_csv('data/Deloitte.csv'))
-pwc = preprocessData(pd.read_csv('data/pwc.csv'))
-data_dic = {"ey":ey, "pwc":pwc  , "kpmg":kpmg , "deliotte":deliotte}

@@ -115,8 +115,8 @@ def generate_table(df, max_rows=10):
         
 )
 
-def hashtag_graphs(hashTag='#BetterWorkingWorld',pain_point=[]):
-    filePath = "{}_query.csv".format(hashTag.lower())
+def hashtag_graphs(hashTag,pain_point=[]):
+    filePath = "database/searchdata/{}_query.csv".format(hashTag)
     if os.path.exists(filePath):
         data = pd.read_csv(filePath)
     else:
@@ -160,8 +160,29 @@ def hashtag_graphs(hashTag='#BetterWorkingWorld',pain_point=[]):
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 from dash.dependencies import Input, Output
+import json
+
+
+
+
+
 
 def prepeare_Hashtag_content(dashboard): 
+    alert = dbc.Alert(
+        [
+            html.P("Campaign Analysis provides you a quick report for your campaign."),
+            html.P("Search bar for choosing the campaign you want a report on"),
+            html.P("Below metrics are provided for the chosen campaign"),
+            html.P("Don't skip the pain point button which gives the discussion for the problem areas around that hashtag")
+        ]
+    )
+
+    with open('database/search_database.json', 'r') as openfile: 
+            data = json.load(openfile) 
+    comp = pd.DataFrame(data['search'])
+    values_dropdown = comp['query'].values
+
+
     switches = dbc.FormGroup(
     [
 #         dbc.Label("Toggle a bunch"),
@@ -188,13 +209,22 @@ def prepeare_Hashtag_content(dashboard):
 
 
     Input_feilds = html.Div([
-        dbc.Input(id="input-1-state", placeholder="Type something... default(#ey)", type="text",value="#ey",style={'width':"70%",'padding-bottom':"20px"}),
+#         dbc.Input(id="input-1-state", placeholder="Type something... default(#ey)", type="text",value="#ey",style={'width':"70%",'padding-bottom':"20px"}),
+        
+        dcc.Dropdown(
+            id='input-1-state',
+            options=[{'label':name, 'value':name} for name in values_dropdown],
+            value = values_dropdown[0],
+            style={'width':"100%"}
+            ),
+        
+        
         switches,
         dbc.Button("Submit", id='submit-button-state', n_clicks=0, color="primary", className="mr-1"),
         html.Div(id='output-state', style={'whiteSpace': 'pre-line'})
     ],style={"padding":"19px",'justify-content':"space-between",'display':"flex",'margin':"auto",'width':"45%"})
 
-    page_buzzwords_content = html.Div([dashboard , Input_feilds  ,html.Div(id="hashtag_full") ])    
+    page_buzzwords_content = html.Div([dashboard , alert,Input_feilds  ,html.Div(id="hashtag_full") ])    
     return page_buzzwords_content
                   
                   
